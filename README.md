@@ -28,7 +28,7 @@ https://services.odata.org/V3/Northwind/Northwind.svc/
 
 1. Создайте консольное приложение _ReportingApp_ и библиотеку классов _Northwind.ReportingServices.OData_ в решении _ReportingApps_.
 
-![ReportingApps Solution Structure](reportingapps-solution-structure.png)
+![ReportingApps Solution Structure](Pictures/reportingapps-solution-structure.png)
 
 ```sh
 $ mkdir ReportingApps
@@ -266,7 +266,7 @@ Product3, 59.01
 
 1. Добавьте библиотеку классов _Northwind.CurrencyServices_ и подключите анализаторы кода.
 
-![Northwind.CurrencyServices in ReportingApps Solution](reportingapps-currencyservices.png)
+![Northwind.CurrencyServices in ReportingApps Solution](Pictures/reportingapps-currencyservices.png)
 
 ```sh
 $ dotnet new classlib --name Northwind.CurrencyServices
@@ -403,7 +403,7 @@ Chai, 18$, United Kingdom of Great Britain and Northern Ireland, 14?
 
 1. Проанализируйте зависимости класса _ProductReportService_. См. статью [Understanding Dependencies](https://habr.com/ru/post/349836/):
 
-![Dependencies of ProductReportService](productreportservice-dependencies.png)
+![Dependencies of ProductReportService](Pictures/productreportservice-dependencies.png)
 
 Какие зависимости имеет класс _ProductReportService_?
 
@@ -444,7 +444,7 @@ public async Task<ProductReport<ProductLocalPrice>> GetCurrentProductsWithLocalC
 
 4. Проанализируйте зависимости класса _ProductReportService_.
 
-![Dependencies of ProductReportService with interfaces](productreportservice-interfaces.png)
+![Dependencies of ProductReportService with interfaces](Pictures/productreportservice-interfaces.png)
 
 См. статью [Dependency injection](https://habr.com/ru/post/350068/). Зависит ли теперь класс _ProductReportService_ от классов _CountryCurrencyService_ и _CurrencyExchangeService_?
 
@@ -461,7 +461,7 @@ $ dotnet add Northwind.ReportingServices\Northwind.ReportingServices.csproj pack
 
 Зависимости проектов выглядят следующим образом:
 
-![Northwind.ReportingServices in ReportingApps Solution](reportingapps-reportingservices.png)
+![Northwind.ReportingServices in ReportingApps Solution](Pictures/reportingapps-reportingservices.png)
 
 6. Добавьте пустой файл интерфейса _IProductReportService_:
 
@@ -480,7 +480,7 @@ $ dotnet add Northwind.ReportingServices\Northwind.ReportingServices.csproj refe
 
 9. Проанализируйте зависимости:
 
-![Extract Interface from ProductReportService](productreportservice-extract-interface.png)
+![Extract Interface from ProductReportService](Pictures/productreportservice-extract-interface.png)
 
 10. Добавьте в _ReportingApp_ новый класс _CurrentProductLocalPriceReport_, который отвечает за печать отчета.
 
@@ -513,7 +513,7 @@ class CurrentProductLocalPriceReport
 
 11. Проанализируйте зависимости:
 
-![CurrentProductLocalPriceReport](currentproductlocalpricereport.png)
+![CurrentProductLocalPriceReport](Pictures/currentproductlocalpricereport.png)
 
 12. Какие зависимости имеет класс _CurrentProductLocalPriceReport_?
 
@@ -538,7 +538,7 @@ _Задание в процессе разработки._
 
 4. Добавьте библиотеку классов _Northwind.ReportingServices.SqlService_.
 
-![Northwind.ReportingServices.SqlService](reportingservices-sqlserver.png)
+![Northwind.ReportingServices.SqlService](Pictures/reportingservices-sqlserver.png)
 
 5. Добавьте файл _ProductReports\ProductReportService.cs_ для нового сервиса, который будет получать данные из БД Northwind.
 
