@@ -532,7 +532,7 @@ _Задание в процессе разработки._
 
 1. Установите [LocalDB](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb) в Visual Studio Installer.
 
-2. Создайте новую БД _Northwind_ в [SQL Server Object Explorer](https://tonystrafford.co.uk/localdb-for-developers/).
+2. Создайте новую БД _Northwind_ в SQL Server Object Explore.
 
 3. Создайте структуру БД, используя SQL Script [instnwnd.sql](https://github.com/microsoft/sql-server-samples/blob/master/samples/databases/northwind-pubs/instnwnd.sql) (начало скрипта удалить до CREATE TABLE).
 
