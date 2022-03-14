@@ -9,7 +9,7 @@ namespace ReportingApp
     /// <summary>
     /// Program class.
     /// </summary>
-    public sealed class Program
+    public static class Program
     {
         /// <summary>
         /// A program entry point.

@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
 
+#pragma warning disable CA1812
+
 namespace Northwind.CurrencyServices.CountryCurrency
 {
     /// <summary>

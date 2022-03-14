@@ -50,7 +50,7 @@ namespace Interfaces
         {
             if (args == null || args.Length < 1)
             {
-                this.ShowHelp();
+                ShowHelp();
                 return;
             }
 
@@ -99,7 +99,7 @@ namespace Interfaces
                     return;
 
                 default:
-                    this.ShowHelp();
+                    ShowHelp();
                     return;
             }
         }
@@ -107,40 +107,40 @@ namespace Interfaces
         private async Task ShowCurrentProducts()
         {
             var report = await this.productReportService.GetCurrentProducts();
-            this.PrintProductReport("current products:", report);
+            PrintProductReport("current products:", report);
         }
 
         private async Task ShowMostExpensiveProducts(int count)
         {
             var report = await this.productReportService.GetMostExpensiveProductsReport(count);
-            this.PrintProductReport($"{count} most expensive products:", report);
+            PrintProductReport($"{count} most expensive products:", report);
         }
 
         private async Task ShowPriceLessThanProducts(decimal value)
         {
             var report = await this.productReportService.GetPriceLessThanProductsReport(value);
-            this.PrintProductReport($"price less than {value} products:", report);
+            PrintProductReport($"price less than {value} products:", report);
         }
 
         private async Task ShowPriceBetweenProducts(decimal first, decimal second)
         {
             var report = await this.productReportService.GetPriceBetweenProductsReport(first, second);
-            this.PrintProductReport($"products with price between {first} and {second}:", report);
+            PrintProductReport($"products with price between {first} and {second}:", report);
         }
 
         private async Task ShowPriceAboveAverageProducts()
         {
             var report = await this.productReportService.GetPriceAboveAverageProductsReport();
-            this.PrintProductReport("products with price above average:", report);
+            PrintProductReport("products with price above average:", report);
         }
 
         private async Task ShowUnitsInStockDeficitProducts()
         {
             var report = await this.productReportService.GetUnitsInStockDeficitProductsReport();
-            this.PrintProductReport($"units in stock deficit products:", report);
+            PrintProductReport($"units in stock deficit products:", report);
         }
 
-        private void PrintProductReport(string header, ProductReport<ProductPrice> productReport)
+        private static void PrintProductReport(string header, ProductReport<ProductPrice> productReport)
         {
             Console.WriteLine($"Report - {header}");
             foreach (var reportLine in productReport.Products)
@@ -153,10 +153,10 @@ namespace Interfaces
         {
             ProductReport<ProductLocalPrice> report = await this.productReportService.GetCurrentProductsWithLocalCurrencyReport(
                 this.countryCurrencyService, this.currencyExchangeService);
-            this.PrintProductLocalPriceReport("current products with local price:", report);
+            PrintProductLocalPriceReport("current products with local price:", report);
         }
 
-        private void PrintProductLocalPriceReport(string header, ProductReport<ProductLocalPrice> productReport)
+        private static void PrintProductLocalPriceReport(string header, ProductReport<ProductLocalPrice> productReport)
         {
             Console.WriteLine($"Report - {header}");
             foreach (var reportLine in productReport.Products)
@@ -166,7 +166,7 @@ namespace Interfaces
             }
         }
 
-        private void ShowHelp()
+        private static void ShowHelp()
         {
             Console.WriteLine("Usage:");
             Console.WriteLine("\tReportingApp.exe <report> <report-argument1> <report-argument2> ...");

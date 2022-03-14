@@ -180,26 +180,31 @@ namespace Northwind.ReportingServices.OData.ProductReports
                 throw new ArgumentNullException(nameof(currencyExchangeService));
             }
 
-            var productReportTask = this.GetCurrentProducts();
+            return await GetCurrentProductsWithLocalCurrencyReport();
 
-            LocalCurrency localCurrency = await countryCurrencyService.GetLocalCurrencyByCountry(RegionInfo.CurrentRegion.EnglishName);
-
-            decimal rate = await currencyExchangeService.GetCurrencyExchangeRate("USD", localCurrency.CurrencyCode);
-
-            List<ProductLocalPrice> productLocalPrices = new List<ProductLocalPrice>();
-            foreach (var product in productReportTask.Result.Products)
+            async Task<ProductReport<ProductLocalPrice>> GetCurrentProductsWithLocalCurrencyReport()
             {
-                productLocalPrices.Add(new ProductLocalPrice()
-                {
-                    Country = localCurrency.CountryName,
-                    CurrencySymbol = localCurrency.CurrencySymbol,
-                    LocalPrice = product.Price * rate,
-                    Name = product.Name,
-                    Price = product.Price,
-                });
-            }
+                var productReportTask = this.GetCurrentProducts();
 
-            return new ProductReport<ProductLocalPrice>(productLocalPrices);
+                LocalCurrency localCurrency = await countryCurrencyService.GetLocalCurrencyByCountry(RegionInfo.CurrentRegion.EnglishName);
+
+                decimal rate = await currencyExchangeService.GetCurrencyExchangeRate("USD", localCurrency.CurrencyCode);
+
+                List<ProductLocalPrice> productLocalPrices = new List<ProductLocalPrice>();
+                foreach (var product in productReportTask.Result.Products)
+                {
+                    productLocalPrices.Add(new ProductLocalPrice()
+                    {
+                        Country = localCurrency.CountryName,
+                        CurrencySymbol = localCurrency.CurrencySymbol,
+                        LocalPrice = product.Price * rate,
+                        Name = product.Name,
+                        Price = product.Price,
+                    });
+                }
+
+                return new ProductReport<ProductLocalPrice>(productLocalPrices);
+            }
         }
 
         private IEnumerable<ProductPrice> ContinuePage(IEnumerable<ProductPrice> response)

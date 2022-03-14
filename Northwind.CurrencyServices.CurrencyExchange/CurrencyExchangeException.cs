@@ -41,6 +41,7 @@ namespace Northwind.CurrencyServices.CurrencyExchange
         /// <param name="serializationInfo">SerializationInfo.</param>
         /// <param name="streamingContext">StreamingContext.</param>
         protected CurrencyExchangeException(SerializationInfo serializationInfo, StreamingContext streamingContext)
+            : base(serializationInfo, streamingContext)
         {
         }
 

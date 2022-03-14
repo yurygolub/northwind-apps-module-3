@@ -25,32 +25,34 @@ namespace Northwind.CurrencyServices.CountryCurrency
                 throw new ArgumentNullException(nameof(countryName));
             }
 
-            LocalCurrency localCurrency = null;
-            Uri uri = new Uri($"https://restcountries.com/v2/name/{countryName}?fields=name,currencies");
-            using (HttpClient client = new HttpClient())
-            {
-                using (Stream response = await client.GetStreamAsync(uri))
-                {
-                    using (TextReader textReader = new StreamReader(response))
-                    {
-                        using (JsonReader reader = new JsonTextReader(textReader))
-                        {
-                            var countryCurrencyInfo = new JsonSerializer()
-                                .Deserialize<IEnumerable<CountryCurrencyInfo>>(reader)
-                                .FirstOrDefault();
+            return await GetLocalCurrencyByCountry();
 
-                            localCurrency = new LocalCurrency()
+            async Task<LocalCurrency> GetLocalCurrencyByCountry()
+            {
+                Uri uri = new Uri($"https://restcountries.com/v2/name/{countryName}?fields=name,currencies");
+                using (HttpClient client = new HttpClient())
+                {
+                    using (Stream response = await client.GetStreamAsync(uri))
+                    {
+                        using (TextReader textReader = new StreamReader(response))
+                        {
+                            using (JsonReader reader = new JsonTextReader(textReader))
                             {
-                                CountryName = countryCurrencyInfo.Name,
-                                CurrencyCode = countryCurrencyInfo.Currencies.FirstOrDefault()?.Code,
-                                CurrencySymbol = countryCurrencyInfo.Currencies.FirstOrDefault()?.Symbol,
-                            };
+                                var countryCurrencyInfo = new JsonSerializer()
+                                    .Deserialize<IEnumerable<CountryCurrencyInfo>>(reader)
+                                    .FirstOrDefault();
+
+                                return new LocalCurrency()
+                                {
+                                    CountryName = countryCurrencyInfo.Name,
+                                    CurrencyCode = countryCurrencyInfo.Currencies.FirstOrDefault()?.Code,
+                                    CurrencySymbol = countryCurrencyInfo.Currencies.FirstOrDefault()?.Symbol,
+                                };
+                            }
                         }
                     }
                 }
             }
-
-            return localCurrency;
         }
     }
 }

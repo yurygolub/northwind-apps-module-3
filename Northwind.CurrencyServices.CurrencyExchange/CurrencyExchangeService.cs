@@ -49,33 +49,38 @@ namespace Northwind.CurrencyServices.CurrencyExchange
                 throw new ArgumentNullException(nameof(exchangeCurrency));
             }
 
-            Uri uri = new Uri($"http://api.currencylayer.com/live" +
-                $"?access_key={this.accessKey}" +
-                $"&currencies={exchangeCurrency}" +
-                $"&source={baseCurrency}" +
-                $"&format=1");
+            return await GetCurrencyExchangeRate();
 
-            using (HttpClient client = new HttpClient())
+            async Task<decimal> GetCurrencyExchangeRate()
             {
-                using (Stream response = await client.GetStreamAsync(uri))
+                using (HttpClient client = new HttpClient())
                 {
-                    using (TextReader textReader = new StreamReader(response))
-                    {
-                        using (JsonReader reader = new JsonTextReader(textReader))
-                        {
-                            var currencyExchangeInfo = new JsonSerializer()
-                                .Deserialize<CurrencyExchangeInfo>(reader);
+                    Uri uri = new Uri($"http://api.currencylayer.com/live" +
+                        $"?access_key={this.accessKey}" +
+                        $"&currencies={exchangeCurrency}" +
+                        $"&source={baseCurrency}" +
+                        $"&format=1");
 
-                            if (currencyExchangeInfo.Success)
+                    using (Stream response = await client.GetStreamAsync(uri))
+                    {
+                        using (TextReader textReader = new StreamReader(response))
+                        {
+                            using (JsonReader reader = new JsonTextReader(textReader))
                             {
-                                return currencyExchangeInfo.Quotes[$"{baseCurrency}{exchangeCurrency}"];
-                            }
-                            else
-                            {
-                                throw new CurrencyExchangeException(currencyExchangeInfo.Error.Info)
+                                var currencyExchangeInfo = new JsonSerializer()
+                                    .Deserialize<CurrencyExchangeInfo>(reader);
+
+                                if (currencyExchangeInfo.Success)
                                 {
-                                    Code = currencyExchangeInfo.Error.Code,
-                                };
+                                    return currencyExchangeInfo.Quotes[$"{baseCurrency}{exchangeCurrency}"];
+                                }
+                                else
+                                {
+                                    throw new CurrencyExchangeException(currencyExchangeInfo.Error.Info)
+                                    {
+                                        Code = currencyExchangeInfo.Error.Code,
+                                    };
+                                }
                             }
                         }
                     }
