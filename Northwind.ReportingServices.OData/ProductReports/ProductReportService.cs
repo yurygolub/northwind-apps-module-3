@@ -9,6 +9,7 @@ using Interfaces.ReportingServices;
 using NorthwindModel;
 
 #pragma warning disable CA2008 // Do not create tasks without passing a TaskScheduler
+#pragma warning disable S4457 // Split method into two, one handling parameters check and the other handling the asynchronous code.
 
 namespace Northwind.ReportingServices.OData.ProductReports
 {

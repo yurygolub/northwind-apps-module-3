@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Interfaces.CurrencyServices;
 using Newtonsoft.Json;
 
+#pragma warning disable S4457 // Split method into two, one handling parameters check and the other handling the asynchronous code.
+
 namespace Northwind.CurrencyServices.CurrencyExchange
 {
     /// <summary>
