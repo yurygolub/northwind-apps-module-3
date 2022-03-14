@@ -12,6 +12,10 @@ namespace ReportingApp
         private const string NorthwindServiceUrl = "https://services.odata.org/V3/Northwind/Northwind.svc";
         private const string CurrentProductsReport = "current-products";
         private const string MostExpensiveProductsReport = "most-expensive-products";
+        private const string LessThanProductsReport = "price-less-then-products";
+        private const string BetweenProductsReport = "price-between-products";
+        private const string PriceAboveProductsReport = "price-above-average-products";
+        private const string UnitsInStockDeficitProductsReport = "units-in-stock-deficit";
 
         /// <summary>
         /// A program entry point.
@@ -78,6 +82,34 @@ namespace ReportingApp
             {
                 Console.WriteLine("{0}, {1}", reportLine.Name, reportLine.Price);
             }
+        }
+
+        private static async Task ShowPriceLessThanProducts(decimal value)
+        {
+            var service = new ProductReportService(new Uri(NorthwindServiceUrl));
+            var report = await service.GetPriceLessThanProductsReport(value);
+            PrintProductReport($"price less than {value} products:", report);
+        }
+
+        private static async Task ShowPriceBetweenProducts(decimal first, decimal second)
+        {
+            var service = new ProductReportService(new Uri(NorthwindServiceUrl));
+            var report = await service.GetPriceBetweenProductsReport(first, second);
+            PrintProductReport($"products with price between {first} and {second}:", report);
+        }
+
+        private static async Task ShowPriceAboveAverageProducts()
+        {
+            var service = new ProductReportService(new Uri(NorthwindServiceUrl));
+            var report = await service.GetPriceAboveAverageProductsReport();
+            PrintProductReport("products with price above average:", report);
+        }
+
+        private static async Task ShowUnitsInStockDeficitProducts()
+        {
+            var service = new ProductReportService(new Uri(NorthwindServiceUrl));
+            var report = await service.GetUnitsInStockDeficitProductsReport();
+            PrintProductReport($"units in stock deficit products:", report);
         }
     }
 }

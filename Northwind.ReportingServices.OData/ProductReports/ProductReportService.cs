@@ -49,30 +49,9 @@ namespace Northwind.ReportingServices.OData.ProductReports
             var result = await Task<IEnumerable<ProductPrice>>
                 .Factory
                 .FromAsync(query.BeginExecute(null, query), ar => query.EndExecute(ar))
-                .ContinueWith(x => ContinuePage(x.Result));
+                .ContinueWith(x => this.ContinuePage(x.Result));
 
             return new ProductReport<ProductPrice>(result);
-
-            IEnumerable<ProductPrice> ContinuePage(IEnumerable<ProductPrice> response)
-            {
-                foreach (var element in response)
-                {
-                    yield return element;
-                }
-
-                if ((response as QueryOperationResponse)?.GetContinuation() is DataServiceQueryContinuation<ProductPrice> continuation)
-                {
-                    var innerTask = Task<IEnumerable<ProductPrice>>
-                        .Factory
-                        .FromAsync(this.entities.BeginExecute(continuation, null, null), this.entities.EndExecute<ProductPrice>)
-                        .ContinueWith(t => ContinuePage(t.Result));
-
-                    foreach (var productPrice in innerTask.Result)
-                    {
-                        yield return productPrice;
-                    }
-                }
-            }
         }
 
         /// <summary>
@@ -105,6 +84,127 @@ namespace Northwind.ReportingServices.OData.ProductReports
             }
 
             return new ProductReport<ProductPrice>(productPrices);
+        }
+
+        /// <summary>
+        /// Gets a product report with price less than value products.
+        /// </summary>
+        /// <param name="value">Value.</param>
+        /// <returns>Returns <see cref="ProductReport{ProductPrice}"/>.</returns>
+        public async Task<ProductReport<ProductPrice>> GetPriceLessThanProductsReport(decimal value)
+        {
+            var query = (DataServiceQuery<ProductPrice>)(
+                from p in this.entities.Products
+                where p.UnitPrice < value
+                orderby p.ProductName
+                select new ProductPrice
+                {
+                    Name = p.ProductName,
+                    Price = p.UnitPrice ?? 0,
+                });
+
+            var result = await Task<IEnumerable<ProductPrice>>
+                .Factory
+                .FromAsync(query.BeginExecute(null, query), ar => query.EndExecute(ar))
+                .ContinueWith(x => this.ContinuePage(x.Result));
+
+            return new ProductReport<ProductPrice>(result);
+        }
+
+        /// <summary>
+        /// Gets a product report with price between first and second products.
+        /// </summary>
+        /// <param name="first">First value.</param>
+        /// <param name="second">Second value.</param>
+        /// <returns>Returns <see cref="ProductReport{ProductPrice}"/>.</returns>
+        public async Task<ProductReport<ProductPrice>> GetPriceBetweenProductsReport(decimal first, decimal second)
+        {
+            var query = (DataServiceQuery<ProductPrice>)(
+                from p in this.entities.Products
+                where p.UnitPrice > first && p.UnitPrice < second
+                orderby p.ProductName
+                select new ProductPrice
+                {
+                    Name = p.ProductName,
+                    Price = p.UnitPrice ?? 0,
+                });
+
+            var result = await Task<IEnumerable<ProductPrice>>
+                .Factory
+                .FromAsync(query.BeginExecute(null, query), ar => query.EndExecute(ar))
+                .ContinueWith(x => this.ContinuePage(x.Result));
+
+            return new ProductReport<ProductPrice>(result);
+        }
+
+        /// <summary>
+        /// Gets a product report with price above average products.
+        /// </summary>
+        /// <returns>Returns <see cref="ProductReport{ProductPrice}"/>.</returns>
+        public async Task<ProductReport<ProductPrice>> GetPriceAboveAverageProductsReport()
+        {
+            decimal average = this.entities.Products.Average(product => product.UnitPrice ?? 0);
+            var query = (DataServiceQuery<ProductPrice>)(
+                from p in this.entities.Products
+                where p.UnitPrice > average
+                orderby p.ProductName
+                select new ProductPrice
+                {
+                    Name = p.ProductName,
+                    Price = p.UnitPrice ?? 0,
+                });
+
+            var result = await Task<IEnumerable<ProductPrice>>
+                .Factory
+                .FromAsync(query.BeginExecute(null, query), ar => query.EndExecute(ar))
+                .ContinueWith(x => this.ContinuePage(x.Result));
+
+            return new ProductReport<ProductPrice>(result);
+        }
+
+        /// <summary>
+        /// Gets a product report with units in stock less than units on order products.
+        /// </summary>
+        /// <returns>Returns <see cref="ProductReport{ProductPrice}"/>.</returns>
+        public async Task<ProductReport<ProductPrice>> GetUnitsInStockDeficitProductsReport()
+        {
+            var query = (DataServiceQuery<ProductPrice>)(
+                from p in this.entities.Products
+                where p.UnitsInStock < p.UnitsOnOrder
+                orderby p.ProductName
+                select new ProductPrice
+                {
+                    Name = p.ProductName,
+                    Price = p.UnitPrice ?? 0,
+                });
+
+            var result = await Task<IEnumerable<ProductPrice>>
+                .Factory
+                .FromAsync(query.BeginExecute(null, query), ar => query.EndExecute(ar))
+                .ContinueWith(x => this.ContinuePage(x.Result));
+
+            return new ProductReport<ProductPrice>(result);
+        }
+
+        private IEnumerable<ProductPrice> ContinuePage(IEnumerable<ProductPrice> response)
+        {
+            foreach (var element in response)
+            {
+                yield return element;
+            }
+
+            if ((response as QueryOperationResponse)?.GetContinuation() is DataServiceQueryContinuation<ProductPrice> continuation)
+            {
+                var innerTask = Task<IEnumerable<ProductPrice>>
+                    .Factory
+                    .FromAsync(this.entities.BeginExecute(continuation, null, null), this.entities.EndExecute<ProductPrice>)
+                    .ContinueWith(t => this.ContinuePage(t.Result));
+
+                foreach (var productPrice in innerTask.Result)
+                {
+                    yield return productPrice;
+                }
+            }
         }
     }
 }
