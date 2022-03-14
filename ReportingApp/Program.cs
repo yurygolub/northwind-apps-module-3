@@ -16,6 +16,7 @@ namespace ReportingApp
         private const string BetweenProductsReport = "price-between-products";
         private const string PriceAboveProductsReport = "price-above-average-products";
         private const string UnitsInStockDeficitProductsReport = "units-in-stock-deficit";
+        private const string CurrentProductsLocalReport = "current-products-local-prices";
 
         /// <summary>
         /// A program entry point.
@@ -110,6 +111,23 @@ namespace ReportingApp
             var service = new ProductReportService(new Uri(NorthwindServiceUrl));
             var report = await service.GetUnitsInStockDeficitProductsReport();
             PrintProductReport($"units in stock deficit products:", report);
+        }
+
+        private static async Task ShowCurrentProductsLocalPrices()
+        {
+            var service = new ProductReportService(new Uri(NorthwindServiceUrl));
+            ProductReport<ProductLocalPrice> report = await service.GetCurrentProductsWithLocalCurrencyReport();
+            PrintProductLocalPriceReport("current products with local price:", report);
+        }
+
+        private static void PrintProductLocalPriceReport(string header, ProductReport<ProductLocalPrice> productReport)
+        {
+            Console.WriteLine($"Report - {header}");
+            foreach (var reportLine in productReport.Products)
+            {
+                Console.WriteLine($"{reportLine.Name}, {reportLine.Price}$, " +
+                    $"{reportLine.Country}, {reportLine.LocalPrice}{reportLine.CurrencySymbol}");
+            }
         }
     }
 }

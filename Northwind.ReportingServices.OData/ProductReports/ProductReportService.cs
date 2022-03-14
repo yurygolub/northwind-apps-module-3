@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Services.Client;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Northwind.CurrencyServices.CountryCurrency;
+using Northwind.CurrencyServices.CurrencyExchange;
 using NorthwindModel;
 
 #pragma warning disable CA2008 // Do not create tasks without passing a TaskScheduler
@@ -184,6 +187,37 @@ namespace Northwind.ReportingServices.OData.ProductReports
                 .ContinueWith(x => this.ContinuePage(x.Result));
 
             return new ProductReport<ProductPrice>(result);
+        }
+
+        /// <summary>
+        /// Gets a product report with current products and local prices.
+        /// </summary>
+        /// <returns>Returns <see cref="ProductReport{ProductLocalPrice}"/>.</returns>
+        public async Task<ProductReport<ProductLocalPrice>> GetCurrentProductsWithLocalCurrencyReport()
+        {
+            var countryCurrencyService = new CountryCurrencyService();
+            var currencyExchangeService = new CurrencyExchangeService("bcd68bba8a7ad1fa61b36ea9b6e09036");
+
+            var productReportTask = this.GetCurrentProducts();
+
+            LocalCurrency localCurrency = await countryCurrencyService.GetLocalCurrencyByCountry(RegionInfo.CurrentRegion.EnglishName);
+
+            decimal rate = await currencyExchangeService.GetCurrencyExchangeRate("USD", localCurrency.CurrencyCode);
+
+            List<ProductLocalPrice> productLocalPrices = new List<ProductLocalPrice>();
+            foreach (var product in productReportTask.Result.Products)
+            {
+                productLocalPrices.Add(new ProductLocalPrice()
+                {
+                    Country = localCurrency.CountryName,
+                    CurrencySymbol = localCurrency.CurrencySymbol,
+                    LocalPrice = product.Price * rate,
+                    Name = product.Name,
+                    Price = product.Price,
+                });
+            }
+
+            return new ProductReport<ProductLocalPrice>(productLocalPrices);
         }
 
         private IEnumerable<ProductPrice> ContinuePage(IEnumerable<ProductPrice> response)
