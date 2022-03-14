@@ -14,11 +14,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReportingApps.Tests", "ReportingApps.Tests\ReportingApps.Tests.csproj", "{35EF6999-284D-48DD-8BC7-9BE38830D5DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interfaces", "Interfaces\Interfaces.csproj", "{C72013AD-5F8B-4AFD-BE77-65B9EB2872FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Interfaces", "Interfaces\Interfaces.csproj", "{C72013AD-5F8B-4AFD-BE77-65B9EB2872FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Northwind.CurrencyServices.CountryCurrency", "Northwind.CurrencyServices.CountryCurrency\Northwind.CurrencyServices.CountryCurrency.csproj", "{A46FCD42-D7BC-468E-B084-3E87A7ABBE38}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Northwind.CurrencyServices.CountryCurrency", "Northwind.CurrencyServices.CountryCurrency\Northwind.CurrencyServices.CountryCurrency.csproj", "{A46FCD42-D7BC-468E-B084-3E87A7ABBE38}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Northwind.CurrencyServices.CurrencyExchange", "Northwind.CurrencyServices.CurrencyExchange\Northwind.CurrencyServices.CurrencyExchange.csproj", "{AEEF4BEC-FC2D-44E6-A052-5F7B10E36D5C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Northwind.CurrencyServices.CurrencyExchange", "Northwind.CurrencyServices.CurrencyExchange\Northwind.CurrencyServices.CurrencyExchange.csproj", "{AEEF4BEC-FC2D-44E6-A052-5F7B10E36D5C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyResolver", "DependencyResolver\DependencyResolver.csproj", "{A89837E5-6798-4CEC-8CC0-8A75230585E2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -102,6 +104,18 @@ Global
 		{AEEF4BEC-FC2D-44E6-A052-5F7B10E36D5C}.Release|x64.Build.0 = Release|Any CPU
 		{AEEF4BEC-FC2D-44E6-A052-5F7B10E36D5C}.Release|x86.ActiveCfg = Release|Any CPU
 		{AEEF4BEC-FC2D-44E6-A052-5F7B10E36D5C}.Release|x86.Build.0 = Release|Any CPU
+		{A89837E5-6798-4CEC-8CC0-8A75230585E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A89837E5-6798-4CEC-8CC0-8A75230585E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A89837E5-6798-4CEC-8CC0-8A75230585E2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A89837E5-6798-4CEC-8CC0-8A75230585E2}.Debug|x64.Build.0 = Debug|Any CPU
+		{A89837E5-6798-4CEC-8CC0-8A75230585E2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A89837E5-6798-4CEC-8CC0-8A75230585E2}.Debug|x86.Build.0 = Debug|Any CPU
+		{A89837E5-6798-4CEC-8CC0-8A75230585E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A89837E5-6798-4CEC-8CC0-8A75230585E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A89837E5-6798-4CEC-8CC0-8A75230585E2}.Release|x64.ActiveCfg = Release|Any CPU
+		{A89837E5-6798-4CEC-8CC0-8A75230585E2}.Release|x64.Build.0 = Release|Any CPU
+		{A89837E5-6798-4CEC-8CC0-8A75230585E2}.Release|x86.ActiveCfg = Release|Any CPU
+		{A89837E5-6798-4CEC-8CC0-8A75230585E2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

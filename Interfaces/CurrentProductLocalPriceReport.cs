@@ -3,12 +3,12 @@ using System.Threading.Tasks;
 using Interfaces.CurrencyServices;
 using Interfaces.ReportingServices;
 
-namespace ReportingApp
+namespace Interfaces
 {
     /// <summary>
     /// Class that is responsible for printing the report.
     /// </summary>
-    internal class CurrentProductLocalPriceReport
+    public class CurrentProductLocalPriceReport
     {
         private const string CurrentProductsReport = "current-products";
         private const string MostExpensiveProductsReport = "most-expensive-products";
@@ -174,6 +174,11 @@ namespace ReportingApp
             Console.WriteLine("Reports:");
             Console.WriteLine($"\t{CurrentProductsReport}\t\tShows current products.");
             Console.WriteLine($"\t{MostExpensiveProductsReport}\t\tShows specified number of the most expensive products.");
+            Console.WriteLine($"\t{LessThanProductsReport}\t\tShows products with price less than specified number.");
+            Console.WriteLine($"\t{BetweenProductsReport}\t\tShows products with price in specified range.");
+            Console.WriteLine($"\t{PriceAboveProductsReport}\t\tShows products with price above average.");
+            Console.WriteLine($"\t{UnitsInStockDeficitProductsReport}\t\tShows products with units in stock less than units on order.");
+            Console.WriteLine($"\t{CurrentProductsLocalReport}\t\tShows current products and their local prices.");
         }
     }
 }

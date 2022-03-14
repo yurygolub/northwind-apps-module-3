@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using Northwind.CurrencyServices.CountryCurrency;
-using Northwind.CurrencyServices.CurrencyExchange;
-using Northwind.ReportingServices.OData.ProductReports;
+using DependencyResolver;
+using Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ReportingApp
 {
@@ -12,8 +11,6 @@ namespace ReportingApp
     /// </summary>
     public sealed class Program
     {
-        private const string NorthwindServiceUrl = "https://services.odata.org/V3/Northwind/Northwind.svc";
-
         /// <summary>
         /// A program entry point.
         /// </summary>
@@ -26,14 +23,13 @@ namespace ReportingApp
                 throw new ArgumentNullException(nameof(args));
             }
 
-            IConfigurationRoot configurationRoot = new Startup().ConfigurationRoot;
+            Startup startup = new Startup();
 
-            var currentProductLocalPriceReport = new CurrentProductLocalPriceReport(
-                new ProductReportService(new Uri(NorthwindServiceUrl)),
-                new CurrencyExchangeService(configurationRoot["AccessKey"]),
-                new CountryCurrencyService());
+            startup.CreateServiceProvider();
 
-            await currentProductLocalPriceReport.PrintReport(args);
+            var service = startup.ServiceProvider.GetService<CurrentProductLocalPriceReport>();
+
+            await service.PrintReport(args);
         }
     }
 }
