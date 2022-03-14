@@ -18,19 +18,27 @@ namespace Northwind.ReportingServices.OData.ProductReports
     public class ProductReportService
     {
         private readonly NorthwindEntities entities;
+        private readonly string accessKey;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProductReportService"/> class.
         /// </summary>
         /// <param name="northwindServiceUri">An URL to Northwind OData service.</param>
-        public ProductReportService(Uri northwindServiceUri)
+        /// <param name="accessKey">Access key for authentication in currencylayer API.</param>
+        public ProductReportService(Uri northwindServiceUri, string accessKey)
         {
             if (northwindServiceUri is null)
             {
                 throw new ArgumentNullException(nameof(northwindServiceUri));
             }
 
+            if (accessKey is null)
+            {
+                throw new ArgumentNullException(nameof(accessKey));
+            }
+
             this.entities = new NorthwindEntities(northwindServiceUri);
+            this.accessKey = accessKey;
         }
 
         /// <summary>
@@ -196,7 +204,7 @@ namespace Northwind.ReportingServices.OData.ProductReports
         public async Task<ProductReport<ProductLocalPrice>> GetCurrentProductsWithLocalCurrencyReport()
         {
             var countryCurrencyService = new CountryCurrencyService();
-            var currencyExchangeService = new CurrencyExchangeService("bcd68bba8a7ad1fa61b36ea9b6e09036");
+            var currencyExchangeService = new CurrencyExchangeService(this.accessKey);
 
             var productReportTask = this.GetCurrentProducts();
 

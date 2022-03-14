@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Northwind.ReportingServices.OData.ProductReports;
 
 namespace ReportingApp
@@ -18,6 +19,8 @@ namespace ReportingApp
         private const string UnitsInStockDeficitProductsReport = "units-in-stock-deficit";
         private const string CurrentProductsLocalReport = "current-products-local-prices";
 
+        private static IConfigurationRoot configurationRoot;
+
         /// <summary>
         /// A program entry point.
         /// </summary>
@@ -25,30 +28,61 @@ namespace ReportingApp
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public static async Task Main(string[] args)
         {
+            configurationRoot = new Startup().ConfigurationRoot;
+
             if (args == null || args.Length < 1)
             {
                 ShowHelp();
                 return;
             }
 
-            var reportName = args[0];
+            string reportName = args[0];
 
-            if (string.Equals(reportName, CurrentProductsReport, StringComparison.InvariantCultureIgnoreCase))
+            switch (reportName)
             {
-                await ShowCurrentProducts();
-                return;
-            }
-            else if (string.Equals(reportName, MostExpensiveProductsReport, StringComparison.InvariantCultureIgnoreCase))
-            {
-                if (args.Length > 1 && int.TryParse(args[1], out int count))
-                {
-                    await ShowMostExpensiveProducts(count);
+                case CurrentProductsReport:
+                    await ShowCurrentProducts();
                     return;
-                }
-            }
-            else
-            {
-                ShowHelp();
+
+                case MostExpensiveProductsReport:
+                    if (args.Length > 1 && int.TryParse(args[1], out int count))
+                    {
+                        await ShowMostExpensiveProducts(count);
+                    }
+
+                    return;
+
+                case LessThanProductsReport:
+                    if (args.Length > 1 && decimal.TryParse(args[1], out decimal value))
+                    {
+                        await ShowPriceLessThanProducts(value);
+                    }
+
+                    return;
+
+                case BetweenProductsReport:
+                    if (args.Length > 2 && decimal.TryParse(args[1], out decimal first) && decimal.TryParse(args[2], out decimal second))
+                    {
+                        await ShowPriceBetweenProducts(first, second);
+                    }
+
+                    return;
+
+                case PriceAboveProductsReport:
+                    await ShowPriceAboveAverageProducts();
+                    return;
+
+                case UnitsInStockDeficitProductsReport:
+                    await ShowUnitsInStockDeficitProducts();
+                    return;
+
+                case CurrentProductsLocalReport:
+                    await ShowCurrentProductsLocalPrices();
+                    return;
+
+                default:
+                    ShowHelp();
+                    return;
             }
         }
 
@@ -64,14 +98,14 @@ namespace ReportingApp
 
         private static async Task ShowCurrentProducts()
         {
-            var service = new ProductReportService(new Uri(NorthwindServiceUrl));
+            var service = new ProductReportService(new Uri(NorthwindServiceUrl), configurationRoot["AccessKey"]);
             var report = await service.GetCurrentProducts();
             PrintProductReport("current products:", report);
         }
 
         private static async Task ShowMostExpensiveProducts(int count)
         {
-            var service = new ProductReportService(new Uri(NorthwindServiceUrl));
+            var service = new ProductReportService(new Uri(NorthwindServiceUrl), configurationRoot["AccessKey"]);
             var report = await service.GetMostExpensiveProductsReport(count);
             PrintProductReport($"{count} most expensive products:", report);
         }
@@ -87,35 +121,35 @@ namespace ReportingApp
 
         private static async Task ShowPriceLessThanProducts(decimal value)
         {
-            var service = new ProductReportService(new Uri(NorthwindServiceUrl));
+            var service = new ProductReportService(new Uri(NorthwindServiceUrl), configurationRoot["AccessKey"]);
             var report = await service.GetPriceLessThanProductsReport(value);
             PrintProductReport($"price less than {value} products:", report);
         }
 
         private static async Task ShowPriceBetweenProducts(decimal first, decimal second)
         {
-            var service = new ProductReportService(new Uri(NorthwindServiceUrl));
+            var service = new ProductReportService(new Uri(NorthwindServiceUrl), configurationRoot["AccessKey"]);
             var report = await service.GetPriceBetweenProductsReport(first, second);
             PrintProductReport($"products with price between {first} and {second}:", report);
         }
 
         private static async Task ShowPriceAboveAverageProducts()
         {
-            var service = new ProductReportService(new Uri(NorthwindServiceUrl));
+            var service = new ProductReportService(new Uri(NorthwindServiceUrl), configurationRoot["AccessKey"]);
             var report = await service.GetPriceAboveAverageProductsReport();
             PrintProductReport("products with price above average:", report);
         }
 
         private static async Task ShowUnitsInStockDeficitProducts()
         {
-            var service = new ProductReportService(new Uri(NorthwindServiceUrl));
+            var service = new ProductReportService(new Uri(NorthwindServiceUrl), configurationRoot["AccessKey"]);
             var report = await service.GetUnitsInStockDeficitProductsReport();
             PrintProductReport($"units in stock deficit products:", report);
         }
 
         private static async Task ShowCurrentProductsLocalPrices()
         {
-            var service = new ProductReportService(new Uri(NorthwindServiceUrl));
+            var service = new ProductReportService(new Uri(NorthwindServiceUrl), configurationRoot["AccessKey"]);
             ProductReport<ProductLocalPrice> report = await service.GetCurrentProductsWithLocalCurrencyReport();
             PrintProductLocalPriceReport("current products with local price:", report);
         }
