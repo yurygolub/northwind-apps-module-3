@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Northwind.ReportingServices.OData.ProductReports
+namespace Interfaces.ReportingServices
 {
     /// <summary>
     /// Represents a report with product lines.
