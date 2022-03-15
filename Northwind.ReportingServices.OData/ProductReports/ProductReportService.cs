@@ -21,15 +21,15 @@ namespace Northwind.ReportingServices.OData.ProductReports
         /// <summary>
         /// Initializes a new instance of the <see cref="ProductReportService"/> class.
         /// </summary>
-        /// <param name="northwindServiceUri">An URL to Northwind OData service.</param>
-        public ProductReportService(Uri northwindServiceUri)
+        /// <param name="northwindEntities">NorthwindEntities.</param>
+        public ProductReportService(NorthwindEntities northwindEntities)
         {
-            if (northwindServiceUri is null)
+            if (northwindEntities is null)
             {
-                throw new ArgumentNullException(nameof(northwindServiceUri));
+                throw new ArgumentNullException(nameof(northwindEntities));
             }
 
-            this.entities = new NorthwindEntities(northwindServiceUri);
+            this.entities = northwindEntities;
         }
 
         /// <inheritdoc/>

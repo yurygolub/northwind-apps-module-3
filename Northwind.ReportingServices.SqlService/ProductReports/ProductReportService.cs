@@ -9,6 +9,7 @@ using Interfaces.ReportingServices;
 using Microsoft.Data.SqlClient;
 
 #pragma warning disable S4457 // Split method into two, one handling parameters check and the other handling the asynchronous code.
+#pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
 
 namespace Northwind.ReportingServices.SqlService.ProductReports
 {
@@ -34,7 +35,7 @@ namespace Northwind.ReportingServices.SqlService.ProductReports
         /// <inheritdoc/>
         public async Task<ProductReport<ProductPrice>> GetCurrentProducts()
         {
-            var products = await this.GetAllProducts();
+            var products = await this.GetProductsByCommand("GetAllProducts");
 
             var query = products
                 .OrderBy(p => p.ProductName)
@@ -46,11 +47,9 @@ namespace Northwind.ReportingServices.SqlService.ProductReports
         /// <inheritdoc/>
         public async Task<ProductReport<ProductPrice>> GetMostExpensiveProductsReport(int count)
         {
-            var products = await this.GetAllProducts();
+            var products = await this.GetProductsByCommand("GetMostExpensiveProducts");
 
             var query = products
-                .OrderByDescending(p => p.UnitPrice)
-                .Take(count)
                 .Select(p => new ProductPrice() { Name = p.ProductName, Price = p.UnitPrice });
 
             return new ProductReport<ProductPrice>(query);
@@ -59,10 +58,9 @@ namespace Northwind.ReportingServices.SqlService.ProductReports
         /// <inheritdoc/>
         public async Task<ProductReport<ProductPrice>> GetPriceLessThanProductsReport(decimal value)
         {
-            var products = await this.GetAllProducts();
+            var products = await this.GetProductsByCommand("GetPriceLessThanProducts");
 
             var query = products
-                .Where(p => p.UnitPrice < value)
                 .OrderBy(p => p.ProductName)
                 .Select(p => new ProductPrice() { Name = p.ProductName, Price = p.UnitPrice });
 
@@ -72,10 +70,9 @@ namespace Northwind.ReportingServices.SqlService.ProductReports
         /// <inheritdoc/>
         public async Task<ProductReport<ProductPrice>> GetPriceBetweenProductsReport(decimal first, decimal second)
         {
-            var products = await this.GetAllProducts();
+            var products = await this.GetProductsByCommand("GetPriceBetweenProducts");
 
             var query = products
-                .Where(p => p.UnitPrice > first && p.UnitPrice < second)
                 .OrderBy(p => p.ProductName)
                 .Select(p => new ProductPrice() { Name = p.ProductName, Price = p.UnitPrice });
 
@@ -85,11 +82,9 @@ namespace Northwind.ReportingServices.SqlService.ProductReports
         /// <inheritdoc/>
         public async Task<ProductReport<ProductPrice>> GetPriceAboveAverageProductsReport()
         {
-            var products = await this.GetAllProducts();
+            var products = await this.GetProductsByCommand("GetPriceAboveAverageProducts");
 
-            decimal average = products.Average(p => p.UnitPrice);
             var query = products
-                .Where(p => p.UnitPrice > average)
                 .OrderBy(p => p.ProductName)
                 .Select(p => new ProductPrice() { Name = p.ProductName, Price = p.UnitPrice });
 
@@ -99,10 +94,9 @@ namespace Northwind.ReportingServices.SqlService.ProductReports
         /// <inheritdoc/>
         public async Task<ProductReport<ProductPrice>> GetUnitsInStockDeficitProductsReport()
         {
-            var products = await this.GetAllProducts();
+            var products = await this.GetProductsByCommand("GetUnitsInStockDeficitProducts");
 
             var query = products
-                .Where(p => p.UnitsInStock < p.UnitsOnOrder)
                 .OrderBy(p => p.ProductName)
                 .Select(p => new ProductPrice() { Name = p.ProductName, Price = p.UnitPrice });
 
@@ -168,9 +162,14 @@ namespace Northwind.ReportingServices.SqlService.ProductReports
             };
         }
 
-        private async Task<IEnumerable<Product>> GetAllProducts()
+        private async Task<IEnumerable<Product>> GetProductsByCommand(string commandText)
         {
-            var sqlCommand = new SqlCommand("GetAllProducts", this.connection)
+            if (commandText is null)
+            {
+                throw new ArgumentNullException(nameof(commandText));
+            }
+
+            var sqlCommand = new SqlCommand(commandText, this.connection)
             {
                 CommandType = CommandType.StoredProcedure,
             };

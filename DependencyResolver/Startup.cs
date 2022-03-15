@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Northwind.CurrencyServices.CountryCurrency;
 using Northwind.CurrencyServices.CurrencyExchange;
+using NorthwindModel;
 using ODataReportService = Northwind.ReportingServices.OData.ProductReports;
 using SqlReportService = Northwind.ReportingServices.SqlService.ProductReports;
 
@@ -46,7 +47,8 @@ namespace DependencyResolver
             this.ServiceProvider = new ServiceCollection()
                 .AddTransient<IProductReportService, ODataReportService.ProductReportService>(s =>
                     new ODataReportService.ProductReportService(
-                        new Uri(this.ConfigurationRoot["NorthwindServiceUrl"])))
+                        new NorthwindEntities(
+                            new Uri(this.ConfigurationRoot["NorthwindServiceUrl"]))))
                 .AddTransient<IProductReportService, SqlReportService.ProductReportService>(s =>
                     new SqlReportService.ProductReportService(
                         new SqlConnection(this.ConfigurationRoot.GetConnectionString("SqlConnection"))))
