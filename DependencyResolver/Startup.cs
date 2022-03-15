@@ -3,11 +3,13 @@ using System.IO;
 using Interfaces;
 using Interfaces.CurrencyServices;
 using Interfaces.ReportingServices;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Northwind.CurrencyServices.CountryCurrency;
 using Northwind.CurrencyServices.CurrencyExchange;
-using Northwind.ReportingServices.OData.ProductReports;
+using ODataReportService = Northwind.ReportingServices.OData.ProductReports;
+using SqlReportService = Northwind.ReportingServices.SqlService.ProductReports;
 
 namespace DependencyResolver
 {
@@ -42,8 +44,12 @@ namespace DependencyResolver
         public void CreateServiceProvider()
         {
             this.ServiceProvider = new ServiceCollection()
-                .AddTransient<IProductReportService, ProductReportService>(s =>
-                    new ProductReportService(new Uri(this.ConfigurationRoot["NorthwindServiceUrl"])))
+                .AddTransient<IProductReportService, ODataReportService.ProductReportService>(s =>
+                    new ODataReportService.ProductReportService(
+                        new Uri(this.ConfigurationRoot["NorthwindServiceUrl"])))
+                .AddTransient<IProductReportService, SqlReportService.ProductReportService>(s =>
+                    new SqlReportService.ProductReportService(
+                        new SqlConnection(this.ConfigurationRoot.GetConnectionString("SqlConnection"))))
                 .AddTransient<ICurrencyExchangeService, CurrencyExchangeService>(s =>
                     new CurrencyExchangeService(this.ConfigurationRoot["AccessKey"]))
                 .AddTransient<ICountryCurrencyService, CountryCurrencyService>()

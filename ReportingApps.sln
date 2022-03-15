@@ -20,7 +20,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Northwind.CurrencyServices.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Northwind.CurrencyServices.CurrencyExchange", "Northwind.CurrencyServices.CurrencyExchange\Northwind.CurrencyServices.CurrencyExchange.csproj", "{AEEF4BEC-FC2D-44E6-A052-5F7B10E36D5C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyResolver", "DependencyResolver\DependencyResolver.csproj", "{A89837E5-6798-4CEC-8CC0-8A75230585E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyResolver", "DependencyResolver\DependencyResolver.csproj", "{A89837E5-6798-4CEC-8CC0-8A75230585E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Northwind.ReportingServices.SqlService", "Northwind.ReportingServices.SqlService\Northwind.ReportingServices.SqlService.csproj", "{E80AD470-50AE-4C4F-91EA-615082BF68CF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -116,6 +118,18 @@ Global
 		{A89837E5-6798-4CEC-8CC0-8A75230585E2}.Release|x64.Build.0 = Release|Any CPU
 		{A89837E5-6798-4CEC-8CC0-8A75230585E2}.Release|x86.ActiveCfg = Release|Any CPU
 		{A89837E5-6798-4CEC-8CC0-8A75230585E2}.Release|x86.Build.0 = Release|Any CPU
+		{E80AD470-50AE-4C4F-91EA-615082BF68CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E80AD470-50AE-4C4F-91EA-615082BF68CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E80AD470-50AE-4C4F-91EA-615082BF68CF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E80AD470-50AE-4C4F-91EA-615082BF68CF}.Debug|x64.Build.0 = Debug|Any CPU
+		{E80AD470-50AE-4C4F-91EA-615082BF68CF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E80AD470-50AE-4C4F-91EA-615082BF68CF}.Debug|x86.Build.0 = Debug|Any CPU
+		{E80AD470-50AE-4C4F-91EA-615082BF68CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E80AD470-50AE-4C4F-91EA-615082BF68CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E80AD470-50AE-4C4F-91EA-615082BF68CF}.Release|x64.ActiveCfg = Release|Any CPU
+		{E80AD470-50AE-4C4F-91EA-615082BF68CF}.Release|x64.Build.0 = Release|Any CPU
+		{E80AD470-50AE-4C4F-91EA-615082BF68CF}.Release|x86.ActiveCfg = Release|Any CPU
+		{E80AD470-50AE-4C4F-91EA-615082BF68CF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

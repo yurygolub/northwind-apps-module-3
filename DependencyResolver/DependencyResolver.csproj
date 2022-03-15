@@ -27,6 +27,7 @@
       <ProjectReference Include="..\Northwind.CurrencyServices.CountryCurrency\Northwind.CurrencyServices.CountryCurrency.csproj" />
       <ProjectReference Include="..\Northwind.CurrencyServices.CurrencyExchange\Northwind.CurrencyServices.CurrencyExchange.csproj" />
       <ProjectReference Include="..\Northwind.ReportingServices.OData\Northwind.ReportingServices.OData.csproj" />
+      <ProjectReference Include="..\Northwind.ReportingServices.SqlService\Northwind.ReportingServices.SqlService.csproj" />
     </ItemGroup>
 
 </Project>
