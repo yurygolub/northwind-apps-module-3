@@ -18,12 +18,12 @@
         /// <summary>
         /// Gets or sets supplierID.
         /// </summary>
-        public int SupplierID { get; set; }
+        public int? SupplierID { get; set; }
 
         /// <summary>
         /// Gets or sets categoryID.
         /// </summary>
-        public int CategoryID { get; set; }
+        public int? CategoryID { get; set; }
 
         /// <summary>
         /// Gets or sets quantityPerUnit.
@@ -33,22 +33,22 @@
         /// <summary>
         /// Gets or sets unitPrice.
         /// </summary>
-        public decimal UnitPrice { get; set; }
+        public decimal? UnitPrice { get; set; }
 
         /// <summary>
         /// Gets or sets unitsInStock.
         /// </summary>
-        public short UnitsInStock { get; set; }
+        public short? UnitsInStock { get; set; }
 
         /// <summary>
         /// Gets or sets unitsOnOrder.
         /// </summary>
-        public short UnitsOnOrder { get; set; }
+        public short? UnitsOnOrder { get; set; }
 
         /// <summary>
         /// Gets or sets reorderLevel.
         /// </summary>
-        public short ReorderLevel { get; set; }
+        public short? ReorderLevel { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether discontinued.

@@ -39,7 +39,7 @@ namespace Northwind.ReportingServices.SqlService.ProductReports
 
             var query = products
                 .OrderBy(p => p.ProductName)
-                .Select(p => new ProductPrice() { Name = p.ProductName, Price = p.UnitPrice });
+                .Select(p => new ProductPrice() { Name = p.ProductName, Price = p.UnitPrice ?? 0 });
 
             return new ProductReport<ProductPrice>(query);
         }
@@ -50,7 +50,7 @@ namespace Northwind.ReportingServices.SqlService.ProductReports
             var products = await this.GetProductsByCommand("GetMostExpensiveProducts");
 
             var query = products
-                .Select(p => new ProductPrice() { Name = p.ProductName, Price = p.UnitPrice });
+                .Select(p => new ProductPrice() { Name = p.ProductName, Price = p.UnitPrice ?? 0 });
 
             return new ProductReport<ProductPrice>(query);
         }
@@ -62,7 +62,7 @@ namespace Northwind.ReportingServices.SqlService.ProductReports
 
             var query = products
                 .OrderBy(p => p.ProductName)
-                .Select(p => new ProductPrice() { Name = p.ProductName, Price = p.UnitPrice });
+                .Select(p => new ProductPrice() { Name = p.ProductName, Price = p.UnitPrice ?? 0 });
 
             return new ProductReport<ProductPrice>(query);
         }
@@ -74,7 +74,7 @@ namespace Northwind.ReportingServices.SqlService.ProductReports
 
             var query = products
                 .OrderBy(p => p.ProductName)
-                .Select(p => new ProductPrice() { Name = p.ProductName, Price = p.UnitPrice });
+                .Select(p => new ProductPrice() { Name = p.ProductName, Price = p.UnitPrice ?? 0 });
 
             return new ProductReport<ProductPrice>(query);
         }
@@ -86,7 +86,7 @@ namespace Northwind.ReportingServices.SqlService.ProductReports
 
             var query = products
                 .OrderBy(p => p.ProductName)
-                .Select(p => new ProductPrice() { Name = p.ProductName, Price = p.UnitPrice });
+                .Select(p => new ProductPrice() { Name = p.ProductName, Price = p.UnitPrice ?? 0 });
 
             return new ProductReport<ProductPrice>(query);
         }
@@ -98,7 +98,7 @@ namespace Northwind.ReportingServices.SqlService.ProductReports
 
             var query = products
                 .OrderBy(p => p.ProductName)
-                .Select(p => new ProductPrice() { Name = p.ProductName, Price = p.UnitPrice });
+                .Select(p => new ProductPrice() { Name = p.ProductName, Price = p.UnitPrice ?? 0 });
 
             return new ProductReport<ProductPrice>(query);
         }
@@ -149,17 +149,25 @@ namespace Northwind.ReportingServices.SqlService.ProductReports
         {
             return new Product
             {
-                ProductID = (int)reader["productID"],
-                ProductName = (string)reader["productName"],
-                SupplierID = (int)reader["supplierID"],
-                CategoryID = (int)reader["categoryID"],
-                QuantityPerUnit = (string)reader["quantityPerUnit"],
-                UnitPrice = (decimal)reader["unitPrice"],
-                UnitsInStock = (short)reader["unitsInStock"],
-                UnitsOnOrder = (short)reader["reorderLevel"],
-                ReorderLevel = (short)reader["reorderLevel"],
-                Discontinued = (bool)reader["discontinued"],
+                ProductID = (int)reader["ProductID"],
+                ProductName = (string)reader["ProductName"],
+                SupplierID = GetValueStruct<int>("SupplierID"),
+                CategoryID = GetValueStruct<int>("CategoryID"),
+                QuantityPerUnit = GetValueClass<string>("QuantityPerUnit"),
+                UnitPrice = GetValueStruct<decimal>("UnitPrice"),
+                UnitsInStock = GetValueStruct<short>("UnitsInStock"),
+                UnitsOnOrder = GetValueStruct<short>("UnitsOnOrder"),
+                ReorderLevel = GetValueStruct<short>("ReorderLevel"),
+                Discontinued = (bool)reader["Discontinued"],
             };
+
+            T GetValueClass<T>(string text)
+                where T : class
+                => reader[text] == DBNull.Value ? null : (T)reader[text];
+
+            T? GetValueStruct<T>(string text)
+                where T : struct
+                => reader[text] == DBNull.Value ? null : (T?)reader[text];
         }
 
         private async Task<IEnumerable<Product>> GetProductsByCommand(string commandText)
