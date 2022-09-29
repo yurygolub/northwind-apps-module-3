@@ -25,7 +25,7 @@ namespace DependencyResolver
         public Startup()
         {
             this.ConfigurationRoot = new ConfigurationBuilder()
-                .AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\appsettings.json"))
+                .AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json"))
                 .Build();
         }
 

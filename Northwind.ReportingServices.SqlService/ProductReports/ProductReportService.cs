@@ -35,7 +35,7 @@ namespace Northwind.ReportingServices.SqlService.ProductReports
         /// <inheritdoc/>
         public async Task<ProductReport<ProductPrice>> GetCurrentProducts()
         {
-            var products = await this.GetProductsByCommand("GetAllProducts");
+            var products = await this.GetProductsByCommandAsync("GetAllProducts");
 
             var query = products
                 .OrderBy(p => p.ProductName)
@@ -47,42 +47,101 @@ namespace Northwind.ReportingServices.SqlService.ProductReports
         /// <inheritdoc/>
         public async Task<ProductReport<ProductPrice>> GetMostExpensiveProductsReport(int count)
         {
-            var products = await this.GetProductsByCommand("GetMostExpensiveProducts");
+            var sqlCommand = new SqlCommand("GetMostExpensiveProducts", this.connection)
+            {
+                CommandType = CommandType.StoredProcedure,
+            };
 
-            var query = products
+            SetParameter(sqlCommand, count, "@count", SqlDbType.Int, isNullable: false);
+
+            if (this.connection.State != ConnectionState.Open)
+            {
+                await this.connection.OpenAsync();
+            }
+
+            var reader = await sqlCommand.ExecuteReaderAsync();
+
+            var products = new List<Product>();
+            while (await reader.ReadAsync())
+            {
+                products.Add(CreateProduct(reader));
+            }
+
+            var productPrices = products
                 .Select(p => new ProductPrice() { Name = p.ProductName, Price = p.UnitPrice ?? 0 });
 
-            return new ProductReport<ProductPrice>(query);
+            sqlCommand.Dispose();
+
+            return new ProductReport<ProductPrice>(productPrices);
         }
 
         /// <inheritdoc/>
         public async Task<ProductReport<ProductPrice>> GetPriceLessThanProductsReport(decimal value)
         {
-            var products = await this.GetProductsByCommand("GetPriceLessThanProducts");
+            var sqlCommand = new SqlCommand("GetPriceLessThanProducts", this.connection)
+            {
+                CommandType = CommandType.StoredProcedure,
+            };
 
-            var query = products
-                .OrderBy(p => p.ProductName)
+            SetParameter(sqlCommand, value, "@value", SqlDbType.Int, isNullable: false);
+
+            if (this.connection.State != ConnectionState.Open)
+            {
+                await this.connection.OpenAsync();
+            }
+
+            var reader = await sqlCommand.ExecuteReaderAsync();
+
+            var products = new List<Product>();
+            while (await reader.ReadAsync())
+            {
+                products.Add(CreateProduct(reader));
+            }
+
+            var productPrices = products
                 .Select(p => new ProductPrice() { Name = p.ProductName, Price = p.UnitPrice ?? 0 });
 
-            return new ProductReport<ProductPrice>(query);
+            sqlCommand.Dispose();
+
+            return new ProductReport<ProductPrice>(productPrices);
         }
 
         /// <inheritdoc/>
         public async Task<ProductReport<ProductPrice>> GetPriceBetweenProductsReport(decimal first, decimal second)
         {
-            var products = await this.GetProductsByCommand("GetPriceBetweenProducts");
+            var sqlCommand = new SqlCommand("GetPriceBetweenProducts", this.connection)
+            {
+                CommandType = CommandType.StoredProcedure,
+            };
 
-            var query = products
-                .OrderBy(p => p.ProductName)
+            SetParameter(sqlCommand, first, "@value1", SqlDbType.Int, isNullable: false);
+            SetParameter(sqlCommand, second, "@value2", SqlDbType.Int, isNullable: false);
+
+            if (this.connection.State != ConnectionState.Open)
+            {
+                await this.connection.OpenAsync();
+            }
+
+            var reader = await sqlCommand.ExecuteReaderAsync();
+
+            var products = new List<Product>();
+            while (await reader.ReadAsync())
+            {
+                products.Add(CreateProduct(reader));
+            }
+
+            var productPrices = products
                 .Select(p => new ProductPrice() { Name = p.ProductName, Price = p.UnitPrice ?? 0 });
 
-            return new ProductReport<ProductPrice>(query);
+            sqlCommand.Dispose();
+
+            return new ProductReport<ProductPrice>(productPrices);
         }
 
         /// <inheritdoc/>
         public async Task<ProductReport<ProductPrice>> GetPriceAboveAverageProductsReport()
         {
-            var products = await this.GetProductsByCommand("GetPriceAboveAverageProducts");
+            var products = await this.GetProductsByCommandAsync("GetPriceAboveAverageProducts");
 
             var query = products
                 .OrderBy(p => p.ProductName)
@@ -94,7 +153,7 @@ namespace Northwind.ReportingServices.SqlService.ProductReports
         /// <inheritdoc/>
         public async Task<ProductReport<ProductPrice>> GetUnitsInStockDeficitProductsReport()
         {
-            var products = await this.GetProductsByCommand("GetUnitsInStockDeficitProducts");
+            var products = await this.GetProductsByCommandAsync("GetUnitsInStockDeficitProducts");
 
             var query = products
                 .OrderBy(p => p.ProductName)
@@ -170,7 +229,22 @@ namespace Northwind.ReportingServices.SqlService.ProductReports
                 => reader[text] == DBNull.Value ? null : (T?)reader[text];
         }
 
-        private async Task<IEnumerable<Product>> GetProductsByCommand(string commandText)
+        private static void SetParameter<T>(SqlCommand command, T property, string parameterName, SqlDbType dbType, int? size = null, bool isNullable = true)
+        {
+            if (size is null)
+            {
+                command.Parameters.Add(parameterName, dbType);
+            }
+            else
+            {
+                command.Parameters.Add(parameterName, dbType, (int)size);
+            }
+
+            command.Parameters[parameterName].IsNullable = isNullable;
+            command.Parameters[parameterName].Value = property != null ? property : Convert.DBNull;
+        }
+
+        private async Task<IEnumerable<Product>> GetProductsByCommandAsync(string commandText)
         {
             if (commandText is null)
             {
@@ -182,7 +256,10 @@ namespace Northwind.ReportingServices.SqlService.ProductReports
                 CommandType = CommandType.StoredProcedure,
             };
 
-            await this.connection.OpenAsync();
+            if (this.connection.State != ConnectionState.Open)
+            {
+                await this.connection.OpenAsync();
+            }
 
             var reader = await sqlCommand.ExecuteReaderAsync();
 
