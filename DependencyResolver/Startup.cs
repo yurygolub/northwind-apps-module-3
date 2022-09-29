@@ -2,15 +2,10 @@
 using System.IO;
 using Interfaces;
 using Interfaces.CurrencyServices;
-using Interfaces.ReportingServices;
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Northwind.CurrencyServices.CountryCurrency;
 using Northwind.CurrencyServices.CurrencyExchange;
-using NorthwindModel;
-using ODataReportService = Northwind.ReportingServices.OData.ProductReports;
-using SqlReportService = Northwind.ReportingServices.SqlService.ProductReports;
 
 namespace DependencyResolver
 {
@@ -24,39 +19,48 @@ namespace DependencyResolver
         /// </summary>
         public Startup()
         {
-            this.ConfigurationRoot = new ConfigurationBuilder()
+            this.Configuration = new ConfigurationBuilder()
                 .AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json"))
                 .Build();
+
+            ServiceCollection services = new ServiceCollection();
+            this.ConfigureServices(services);
+            this.ServiceProvider = services.BuildServiceProvider();
         }
 
         /// <summary>
         /// Gets configurationRoot.
         /// </summary>
-        public IConfigurationRoot ConfigurationRoot { get; }
+        public IConfiguration Configuration { get; }
 
         /// <summary>
         /// Gets service provider.
         /// </summary>
-        public IServiceProvider ServiceProvider { get; private set; }
+        public IServiceProvider ServiceProvider { get; }
 
         /// <summary>
-        /// Creates service provider.
+        /// Configures services.
         /// </summary>
-        public void CreateServiceProvider()
+        /// <param name="services">Services.</param>
+        public void ConfigureServices(IServiceCollection services)
         {
-            this.ServiceProvider = new ServiceCollection()
-                .AddTransient<IProductReportService, ODataReportService.ProductReportService>(s =>
-                    new ODataReportService.ProductReportService(
-                        new NorthwindEntities(
-                            new Uri(this.ConfigurationRoot["NorthwindServiceUrl"]))))
-                .AddTransient<IProductReportService, SqlReportService.ProductReportService>(s =>
-                    new SqlReportService.ProductReportService(
-                        new SqlConnection(this.ConfigurationRoot.GetConnectionString("SqlConnection"))))
+            switch (this.Configuration["Mode"])
+            {
+                case "Sql":
+                    services.AddSqlServices(this.Configuration);
+                    break;
+
+                case "OData":
+                default:
+                    services.AddODataServices(this.Configuration);
+                    break;
+            }
+
+            services
                 .AddTransient<ICurrencyExchangeService, CurrencyExchangeService>(s =>
-                    new CurrencyExchangeService(this.ConfigurationRoot["AccessKey"]))
+                    new CurrencyExchangeService(this.Configuration["AccessKey"]))
                 .AddTransient<ICountryCurrencyService, CountryCurrencyService>()
-                .AddSingleton<CurrentProductLocalPriceReport>()
-                .BuildServiceProvider();
+                .AddSingleton<CurrentProductLocalPriceReport>();
         }
     }
 }

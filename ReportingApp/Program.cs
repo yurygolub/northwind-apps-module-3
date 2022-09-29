@@ -25,8 +25,6 @@ namespace ReportingApp
 
             Startup startup = new Startup();
 
-            startup.CreateServiceProvider();
-
             var service = startup.ServiceProvider.GetService<CurrentProductLocalPriceReport>();
 
             await service.PrintReport(args);
