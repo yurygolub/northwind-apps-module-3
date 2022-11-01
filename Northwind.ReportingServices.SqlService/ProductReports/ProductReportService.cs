@@ -24,12 +24,7 @@ namespace Northwind.ReportingServices.SqlService.ProductReports
         /// <param name="connection">Sql connection object.</param>
         public ProductReportService(SqlConnection connection)
         {
-            if (connection is null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-
-            this.connection = connection;
+            this.connection = connection ?? throw new ArgumentNullException(nameof(connection));
         }
 
         /// <inheritdoc/>
@@ -167,15 +162,8 @@ namespace Northwind.ReportingServices.SqlService.ProductReports
             ICountryCurrencyService countryCurrencyService,
             ICurrencyExchangeService currencyExchangeService)
         {
-            if (countryCurrencyService is null)
-            {
-                throw new ArgumentNullException(nameof(countryCurrencyService));
-            }
-
-            if (currencyExchangeService is null)
-            {
-                throw new ArgumentNullException(nameof(currencyExchangeService));
-            }
+            _ = countryCurrencyService ?? throw new ArgumentNullException(nameof(countryCurrencyService));
+            _ = currencyExchangeService ?? throw new ArgumentNullException(nameof(currencyExchangeService));
 
             return await GetCurrentProductsWithLocalCurrencyReport();
 
@@ -246,10 +234,7 @@ namespace Northwind.ReportingServices.SqlService.ProductReports
 
         private async Task<IEnumerable<Product>> GetProductsByCommandAsync(string commandText)
         {
-            if (commandText is null)
-            {
-                throw new ArgumentNullException(nameof(commandText));
-            }
+            _ = commandText ?? throw new ArgumentNullException(nameof(commandText));
 
             var sqlCommand = new SqlCommand(commandText, this.connection)
             {

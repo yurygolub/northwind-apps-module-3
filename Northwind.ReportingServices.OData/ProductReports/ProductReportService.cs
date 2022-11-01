@@ -24,12 +24,7 @@ namespace Northwind.ReportingServices.OData.ProductReports
         /// <param name="northwindEntities">NorthwindEntities.</param>
         public ProductReportService(NorthwindEntities northwindEntities)
         {
-            if (northwindEntities is null)
-            {
-                throw new ArgumentNullException(nameof(northwindEntities));
-            }
-
-            this.entities = northwindEntities;
+            this.entities = northwindEntities ?? throw new ArgumentNullException(nameof(northwindEntities));
         }
 
         /// <inheritdoc/>
@@ -171,15 +166,8 @@ namespace Northwind.ReportingServices.OData.ProductReports
             ICountryCurrencyService countryCurrencyService,
             ICurrencyExchangeService currencyExchangeService)
         {
-            if (countryCurrencyService is null)
-            {
-                throw new ArgumentNullException(nameof(countryCurrencyService));
-            }
-
-            if (currencyExchangeService is null)
-            {
-                throw new ArgumentNullException(nameof(currencyExchangeService));
-            }
+            _ = countryCurrencyService ?? throw new ArgumentNullException(nameof(countryCurrencyService));
+            _ = currencyExchangeService ?? throw new ArgumentNullException(nameof(currencyExchangeService));
 
             return await GetCurrentProductsWithLocalCurrencyReport();
 

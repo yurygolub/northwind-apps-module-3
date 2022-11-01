@@ -22,10 +22,7 @@ namespace Northwind.CurrencyServices.CountryCurrency
         /// <exception cref="ArgumentNullException">Thrown if countryName is null.</exception>
         public async Task<LocalCurrency> GetLocalCurrencyByCountry(string countryName)
         {
-            if (countryName is null)
-            {
-                throw new ArgumentNullException(nameof(countryName));
-            }
+            _ = countryName ?? throw new ArgumentNullException(nameof(countryName));
 
             return await GetLocalCurrencyByCountry();
 

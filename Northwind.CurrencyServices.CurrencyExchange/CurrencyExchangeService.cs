@@ -41,15 +41,8 @@ namespace Northwind.CurrencyServices.CurrencyExchange
         /// <exception cref="CurrencyExchangeException">Thrown if currencylayer don't give exchange rate.</exception>
         public async Task<decimal> GetCurrencyExchangeRate(string baseCurrency, string exchangeCurrency)
         {
-            if (baseCurrency is null)
-            {
-                throw new ArgumentNullException(nameof(baseCurrency));
-            }
-
-            if (exchangeCurrency is null)
-            {
-                throw new ArgumentNullException(nameof(exchangeCurrency));
-            }
+            _ = baseCurrency ?? throw new ArgumentNullException(nameof(baseCurrency));
+            _ = exchangeCurrency ?? throw new ArgumentNullException(nameof(exchangeCurrency));
 
             return await GetCurrencyExchangeRate();
 
